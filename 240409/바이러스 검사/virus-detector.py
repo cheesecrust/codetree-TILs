@@ -12,10 +12,8 @@ for customer in customers:
         continue
     
     customer -= master
-
-    if(customer % member == 0):
-        answer += (customer // member)
-    else:
-        answer += (customer // member + 1)
+    answer += (customer // member)
+    if(customer % member != 0):
+        answer += 1
 
 print(answer)
