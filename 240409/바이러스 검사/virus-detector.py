@@ -6,11 +6,16 @@ master, member = map(int, input().split())
 
 answer = 0
 for customer in customers:
+    
+    answer += 1
+    if(customer <= master):
+        continue
+    
+    customer -= master
 
-    if(customer < master):
-        answer += 1
+    if(customer % member == 0):
+        answer += (customer // member)
     else:
-        customer -= master
-        answer += (1 + customer // member + (customer % member)) 
+        answer += (customer // member + 1)
 
 print(answer)
