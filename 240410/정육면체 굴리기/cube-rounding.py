@@ -25,7 +25,7 @@ def rolling (dice, y, x, direction):
         print(right)
         if numMap[ny][nx] == 0:
             numMap[ny][nx] = left
-            dice = (right, left, front, back, bottom, top)
+            dice = (right, left, front, back, top, bottom)
         else:
             dice = (right, numMap[ny][nx], front, back, top, bottom)
             numMap[ny][nx] = 0
