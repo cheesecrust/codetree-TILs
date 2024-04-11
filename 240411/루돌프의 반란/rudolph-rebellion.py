@@ -71,9 +71,8 @@ def dfs(santa, direction):
         nextNum = gameMap[nxty][nxtx]    
         nextSanta = santaList[nextNum]
         dfs(nextSanta, direction)
-        gameMap[nxty][nxtx] = santa.num
-    else:
-        gameMap[nxty][nxtx] = santa.num
+        
+    gameMap[nxty][nxtx] = santa.num
 
 def crush(santa, direction, amount, turn):
     gameMap[santa.y][santa.x] = 0
@@ -96,10 +95,8 @@ def crush(santa, direction, amount, turn):
         nextNum = gameMap[santa.y][santa.x]
         nextSanta = santaList[nextNum]
         dfs(nextSanta, direction)
-        gameMap[santa.y][santa.x] = santa.num
-    # 아무도 없음
-    else:
-        gameMap[santa.y][santa.x] = santa.num
+        
+    gameMap[santa.y][santa.x] = santa.num
 
 def moveRodolf(turn):
     target = Santa(0,0,0)
