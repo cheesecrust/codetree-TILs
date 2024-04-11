@@ -94,7 +94,7 @@ def crush(santa, direction, amount, turn):
     # 날아갔는데 산타가 존재 상호작용 시작
     if gameMap[santa.y][santa.x] != 0:
         nextNum = gameMap[santa.y][santa.x]
-        nextSanta = santaList[nextNum - 1]
+        nextSanta = santaList[nextNum]
 
         dfs(nextSanta, direction)
         gameMap[santa.y][santa.x] = santa.num
@@ -106,8 +106,9 @@ def moveRodolf(turn):
     target = Santa(0,0,0)
     distance = 2147000000
 
-    for santa in santaList:
-        if santa.fail: continue
+    for santa in santaList[1:]:
+        if santa.fail : continue
+
         tmp = santa.compare(rodolf)
 
         if tmp < distance:
@@ -118,19 +119,25 @@ def moveRodolf(turn):
         elif tmp == distance and target.y == santa.y and target.x < santa.x:
             target = santa
 
+    # print("rodolf :", rodolf)
+    # print("target :", target)
+
     direction = rodolf.move(target)
 
+    # print("direction: ", direction)
     rodolf.y += dy[direction]
     rodolf.x += dx[direction]
 
     # 움직인 루돌프의 위치를 보고 충돌 판단
     if gameMap[rodolf.y][rodolf.x] != 0:
+        # print("루돌프가 박음")
         nextNum = gameMap[rodolf.y][rodolf.x]
-        nextSanta = santaList[nextNum - 1]
+        nextSanta = santaList[nextNum]
+        # print("nextSanta: ", nextSanta, nextNum)
         crush(nextSanta, direction, C, turn)
 
 def moveSanta(turn):
-    for santa in santaList:
+    for santa in santaList[1:]:
 
         if santa.fail or santa.stun > turn:
             continue
@@ -176,13 +183,13 @@ def moveSanta(turn):
 
 def calculateScore():
     cnt = 0
-    for santa in santaList:
+    for santa in santaList[1:]:
         if not santa.fail:
             santa.score += 1
         else:
             cnt += 1
 
-    if cnt == len(santaList): 
+    if cnt == len(santaList[1:]): 
         return False
 
     return True
@@ -190,6 +197,9 @@ def calculateScore():
 def game(turn):
     moveRodolf(turn)
     moveSanta(turn)
+    # print("aftet move rodolf: ",rodolf)
+    # print(gameMap[1:])
+    # print()
     return calculateScore()
 
 if __name__ == "__main__":
@@ -199,17 +209,17 @@ if __name__ == "__main__":
     inputList = [ list(map(int, input().split())) for _ in range(P)]
 
     rodolf = Rodolf(Ry, Rx)
-    santaList = []
+    santaList = [Santa(0,0,0) for _ in range(P + 1)]
 
     gameMap = [list(0 for _ in range(N+1)) for _ in range(N+1)]
 
     for i in range(P):
         santa = Santa(inputList[i][0], inputList[i][1], inputList[i][2])
         gameMap[inputList[i][1]][inputList[i][2]] = inputList[i][0]
-        santaList.append(santa)
+        santaList[inputList[i][0]] = santa
     
     for i in range(1, 8):
         if not game(i): break
     
-    for santa in santaList:
+    for santa in santaList[1:]:
         print(santa.score, end = " ")
