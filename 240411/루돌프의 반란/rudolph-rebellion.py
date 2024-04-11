@@ -206,17 +206,16 @@ if __name__ == "__main__":
     N, M, P, C, D = map(int, input().split())
     Ry, Rx = map(int, input().split())
     
-    inputList = [ list(map(int, input().split())) for _ in range(P)]
-
     rodolf = Rodolf(Ry, Rx)
     santaList = [Santa(0,0,0) for _ in range(P + 1)]
 
     gameMap = [list(0 for _ in range(N+1)) for _ in range(N+1)]
 
     for i in range(P):
-        santa = Santa(inputList[i][0], inputList[i][1], inputList[i][2])
-        gameMap[inputList[i][1]][inputList[i][2]] = inputList[i][0]
-        santaList[inputList[i][0]] = santa
+        a, b, c = map(int, input().split())
+        santa = Santa(a, b, c)
+        gameMap[b][c] = a
+        santaList[a] = santa
     
     # print(gameMap[1:])
     # print()
