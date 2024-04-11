@@ -218,7 +218,10 @@ if __name__ == "__main__":
         gameMap[inputList[i][1]][inputList[i][2]] = inputList[i][0]
         santaList[inputList[i][0]] = santa
     
-    for i in range(1, 8):
+    # print(gameMap[1:])
+    # print()
+
+    for i in range(1, M + 1):
         if not game(i): break
     
     for santa in santaList[1:]:
