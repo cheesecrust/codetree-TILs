@@ -31,7 +31,9 @@ class Rodolf:
         elif santa.y < self.y and santa.x > self.x: return 1 
         elif santa.y > self.y and santa.x > self.x: return 3
         else:
-            print("crush")
+            print(self)
+            print(santa)
+            print("error")
 
 class Santa:
     num = 0
