@@ -71,9 +71,9 @@ def dfs(santa, direction):
         nextNum = gameMap[nxty][nxtx]    
         nextSanta = santaList[nextNum]
         dfs(nextSanta, direction)
-        return
-
-    gameMap[nxty][nxtx] = santa.num
+        gameMap[nxty][nxtx] = santa.num
+    else:
+        gameMap[nxty][nxtx] = santa.num
 
 def crush(santa, direction, amount, turn):
     gameMap[santa.y][santa.x] = 0
@@ -91,11 +91,10 @@ def crush(santa, direction, amount, turn):
     santa.y = nxty
     santa.x = nxtx
 
-    # 날아갔는데 산타가 존재 상호작용 시작
+    # 날아갔는데 산타가 존재, 상호작용 시작
     if gameMap[santa.y][santa.x] != 0:
         nextNum = gameMap[santa.y][santa.x]
         nextSanta = santaList[nextNum]
-
         dfs(nextSanta, direction)
         gameMap[santa.y][santa.x] = santa.num
     # 아무도 없음
@@ -207,7 +206,7 @@ if __name__ == "__main__":
     Ry, Rx = map(int, input().split())
     
     rodolf = Rodolf(Ry, Rx)
-    santaList = [Santa(0,0,0) for _ in range(P + 1)]
+    santaList = [Santa(0, 0, 0) for _ in range(P + 1)]
 
     gameMap = [list(0 for _ in range(N+1)) for _ in range(N+1)]
 
