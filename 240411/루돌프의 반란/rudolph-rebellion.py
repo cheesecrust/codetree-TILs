@@ -177,10 +177,10 @@ def calculateScore():
     for santa in santaList:
         if not santa.fail:
             santa.score += 1
+        else:
             cnt += 1
 
     if cnt == len(santaList): 
-        print("A")
         return False
 
     return True
