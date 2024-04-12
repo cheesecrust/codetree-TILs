@@ -48,9 +48,9 @@ def move(knight, direction):
     # 이동한 곳 벽 있는지 check
     for i in range(nxtRow, nxtRow + height):
         for j in range(nxtCol, nxtCol + width):
-            if chessMap[i][j] == 2:
-                return False
             if i < 1 or j < 1 or i > L or j > L:
+                return False
+            if chessMap[i][j] == 2:
                 return False
     
     # 내가 아닌 나이트가 있는지
