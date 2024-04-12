@@ -85,7 +85,7 @@ def changeHeart(knight):
     knight.change = False
 
     # 죽으면 맵 리셋
-    if knight.heart == 0:
+    if knight.heart < 0:
         knight.fail = True
         changeMap(knight, 0)
             
