@@ -90,8 +90,7 @@ def changeHeart(knight):
         changeMap(knight, 0)
             
 def start():
-    for order in orderList[:3]:
-        # print(order)
+    for order in orderList:
         knightNum, direction = order[0], order[1]
         knight = knightList[knightNum]
 
@@ -109,8 +108,6 @@ def start():
         for knight in knightList:
             if knight.change: 
                 changeHeart(knight)
-
-
 
 if __name__ == "__main__":
     L, N, Q = map(int, input().split())
