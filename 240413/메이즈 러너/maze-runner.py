@@ -22,7 +22,6 @@ class Player:
         
 def move():
     for player in playerList:
-
         if player.escape:
             continue
 
@@ -76,15 +75,15 @@ def findNearPlayer():
         if distance < leastDistance:
             leastDistance = distance
             nearPlayerIdx = i
+
         elif distance == leastDistance:
             originPlayer = playerList[nearPlayerIdx]
             comparePlayer = playerList[i]
-            
+
             if comparePlayer.y < originPlayer.y:
                 nearPlayerIdx = i
             elif comparePlayer.y == originPlayer.y and comparePlayer.x < originPlayer.x:
                 nearPlayerIdx = i
-
 
     if nearPlayerIdx == -1:
         print("error")
@@ -139,13 +138,16 @@ def rotate():
             if i < 1 or i > N or j < 1 or j > N:
                 continue
 
-            if (nearPlayer.y - i) <= boxLength and (nearPlayer.x - j) <= boxLength:
+            if abs(nearPlayer.y - i) <= boxLength and abs(nearPlayer.x - j) <= boxLength:
                 pivotY, pivotX = i, j
                 flag = True
                 break
     
         if flag:
             break
+
+    if pivotY == 0 and pivotX == 0:
+        print("error")
 
     rotate90(pivotY, pivotX, boxLength)
 
