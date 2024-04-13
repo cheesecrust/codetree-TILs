@@ -150,7 +150,7 @@ def game():
         # 참가자 움직이기
         move()
 
-        print("player0 : ", playerList[0])
+        # print("player0 : ", playerList[0])
         # 모든 참가자가 탈출할경우
         for player in playerList:
             if not player.escape:
