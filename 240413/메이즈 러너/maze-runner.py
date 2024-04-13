@@ -1,193 +1,191 @@
-N, M, K = 0, 0, 0
-maze = []
-playerList = []
-playerLocation = []
-exitY, exitX = 0, 0
+n, m, k = tuple(map(int, input().split()))
+# 모든 벽들의 상태를 기록해줍니다.
+board = [
+    [0] * (n + 1)
+    for _ in range(n + 1)
+]
 
-dy = [1,-1,0,0]
-dx = [0,0,1,-1]
+for i in range(1, n + 1):
+    board[i] = [0] + list(map(int, input().split()))
 
-class Player:
-    y = 0
-    x = 0
-    escape = False
-    count = 0
+# 회전의 구현을 편하게 하기 위해 2차원 배열을 하나 더 정의해줍니다.
+next_board = [
+    [0] * (n + 1)
+    for _ in range(n + 1)
+]
 
-    def __init__(self, y, x):
-        self.y = y
-        self.x = x
+# 참가자의 위치 정보를 기록해줍니다.
+traveler = [(-1, -1)] + [
+    tuple(map(int, input().split()))
+    for _ in range(m)
+]
 
-    def __str__(self):
-        return f'y: {self.y}, x: {self.x}, escape: {self.escape}'
+# 출구의 위치 정보를 기록해줍니다.
+exits = tuple(map(int, input().split()))
+
+# 정답(모든 참가자들의 이동 거리 합)을 기록해줍니다.
+ans = 0
+
+# 회전해야 하는 최소 정사각형을 찾아 기록해줍니다.
+sx, sy, square_size = 0, 0, 0
+
+
+# 모든 참가자를 이동시킵니다.
+def move_all_traveler():
+    global exits, ans
+
+    # m명의 모든 참가자들에 대해 이동을 진행합니다.
+    for i in range(1, m + 1):
+        # 이미 출구에 있는 경우 스킵합니다.
+        if traveler[i] == exits:
+            continue
         
-def move():
-    for player in playerList:
-        if player.escape:
-            continue
+        tx, ty = traveler[i]
+        ex, ey = exits
 
-        originDistance = abs(exitY - player.y) + abs(exitX - player.x)
+        # 행이 다른 경우 행을 이동시켜봅니다.
+        if tx != ex:
+            nx, ny = tx, ty
 
-        # -1은 움직이지 않는 상태
-        moveDirection = -1
-        for direction in range(4):
-            nxtY = player.y + dy[direction]
-            nxtX = player.x + dx[direction]
-            
-            # 범위 벗어나면 다시
-            if nxtY < 1 or N < nxtY or nxtX < 1 or N < nxtX:
-                continue   
+            if ex > nx: 
+                nx += 1
+            else:
+                nx -= 1
 
-            # 벽에 가로막히면 다시
-            if maze[nxtY][nxtX] != 0:
+            # 벽이 없다면 행을 이동시킬 수 있습니다.
+            # 이 경우 행을 이동시키고 바로 다음 참가자로 넘어갑니다.
+            if not board[nx][ny]:
+                traveler[i] = (nx, ny)
+                ans += 1
                 continue
 
-            distance = abs(exitY - nxtY) + abs(exitX - nxtX)
+        # 열이 다른 경우 열을 이동시켜봅니다.
+        if ty != ey:
+            nx, ny = tx, ty
 
-            if distance < originDistance:
-                moveDirection = direction
-                originDistance = distance
+            if ey > ny: 
+                ny += 1
+            else:
+                ny -= 1
 
-        # 움직일 곳이 없다. 움직이지 않는다.
-        if moveDirection == -1:
-            continue
-
-        #움직임 반영
-        player.y += dy[moveDirection]
-        player.x += dx[moveDirection]
-        player.count += 1
-
-        # 출구에 도착할시 탈출
-        if player.y == exitY and player.x == exitX:
-            player.escape = True
-
-def findNearPlayer():
-    leastDistance = 1000
-
-    nearPlayerIdx = -1
-    for i in range(len(playerList)):
-        player = playerList[i]
-
-        if player.escape:
-            continue
-
-        distance = abs(exitY - player.y) + abs(exitX - player.x)
-
-        if distance < leastDistance:
-            leastDistance = distance
-            nearPlayerIdx = i
-
-    if nearPlayerIdx == -1:
-        print("error")
-
-    return playerList[nearPlayerIdx]
-
-def rotate90(pivotY, pivotX, length):
-    global exitY, exitX
-
-    newArr = [[0] * (N + 1) for _ in range(N + 1)]
-    
-    sy, sx = pivotY, pivotX 
-    changeList = []
-    for i in range(sy, sy + length +1):
-        for j in range(sx, sx + length + 1):
-            # 옮기는 대상이 벽이면 내구도 1 감소
-            if maze[i][j] > 0:
-                maze[i][j] -= 1
-
-            oy, ox = i - sy, j - sx
-            ry, rx = ox, length - oy
-            newArr[ry][rx] = maze[i][j]
-            
-            # 옮기는 대상에 사람있으면 해당 사람 좌표 수정
-            # j - sx + sy, length - (i - sy) + sx
-            for player in playerList:
-                if player.y == i and player.x == j:
-                    changeList.append(player)
-
-    for i in range(sy, sy + length + 1):
-        for j in range(sx, sx + length + 1):
-            maze[i][j] = newArr[i - sy][j - sx]
-    
-    for changePlayer in changeList:
-        playerY = changePlayer.y
-        playerX = changePlayer.x
-
-        changePlayer.y = playerX - sx + sy
-        changePlayer.x = length - (playerY - sy) + sx
-
-    exitY, exitX = exitX - sx + sy, length - (exitY - sy) + sx
-
-def rotate():
-    nearPlayer = findNearPlayer()
-
-    boxLength = max(abs(nearPlayer.y - exitY), abs(nearPlayer.x - exitX))
-    pivotY, pivotX = 0, 0
-
-    flag = False
-    for i in range(exitY - boxLength, exitY + boxLength + 1):
-        for j in range(exitX - boxLength, exitX + boxLength + 1):
-            if i < 1 or i > N or j < 1 or j > N:
+            # 벽이 없다면 행을 이동시킬 수 있습니다.
+            # 이 경우 열을 이동시킵니다.
+            if not board[nx][ny]:
+                traveler[i] = (nx, ny)
+                ans += 1
                 continue
 
-            for player in playerList:
-                if player.escape: continue
 
-                if i <= player.y <= i + boxLength and j <= player.x <= j + boxLength:
-                    pivotY, pivotX = i, j
-                    flag = True
-                    break
-    
-            if flag:
-                break
+# 한 명 이상의 참가자와 출구를 포함한 가장 작은 정사각형을 찾습니다.
+def find_minimum_square():
+    global exits, sx, sy, square_size
+    ex, ey = exits
 
-        if flag:
-            break
+    # 가장 작은 정사각형부터 모든 정사각형을 만들어봅니다.
+    for sz in range(2, n + 1):
+        # 가장 좌상단 r 좌표가 작은 것부터 하나씩 만들어봅니다.
+        for x1 in range(1, n - sz + 2):
+            # 가장 좌상단 c 좌표가 작은 것부터 하나씩 만들어봅니다.
+            for y1 in range(1, n - sz + 2):
+                x2, y2 = x1 + sz - 1, y1 + sz - 1
+
+                # 만약 출구가 해당 정사각형 안에 없다면 스킵합니다.
+                if not (x1 <= ex and ex <= x2 and y1 <= ey and ey <= y2):
+                    continue
+
+                # 한 명 이상의 참가자가 해당 정사각형 안에 있는지 판단합니다.
+                is_traveler_in = False
+                for l in range(1, m + 1):
+                    tx, ty = traveler[l]
+                    if x1 <= tx and tx <= x2 and y1 <= ty and ty <= y2:
+                        # 출구에 있는 참가자는 제외합니다.
+                        if not (tx == ex and ty == ey):
+                            is_traveler_in = True
+
+                # 만약 한 명 이상의 참가자가 해당 정사각형 안에 있다면
+                # sx, sy, square_size 정보를 갱신하고 종료합니다.
+                if is_traveler_in:
+                    sx = x1
+                    sy = y1
+                    square_size = sz
+
+                    return
 
 
-    if pivotY == 0 and pivotX == 0:
-        print("error")
+# 정사각형 내부의 벽을 회전시킵니다.
+def rotate_square():
+    # 우선 정사각형 안에 있는 벽들을 1 감소시킵니다.
+    for x in range(sx, sx + square_size):
+        for y in range(sy, sy + square_size):
+            if board[x][y]: 
+                board[x][y] -= 1
 
-    rotate90(pivotY, pivotX, boxLength)
+    # 정사각형을 시계방향으로 90' 회전합니다.
+    for x in range(sx, sx + square_size):
+        for y in range(sy, sy + square_size):
+            # Step 1. (sx, sy)를 (0, 0)으로 옮겨주는 변환을 진행합니다. 
+            ox, oy = x - sx, y - sy
+            # Step 2. 변환된 상태에서는 회전 이후의 좌표가 (x, y) . (y, square_n - x - 1)가 됩니다.
+            rx, ry = oy, square_size - ox - 1
+            # Step 3. 다시 (sx, sy)를 더해줍니다.
+            next_board[rx + sx][ry + sy] = board[x][y]
+
+    # next_board 값을 현재 board에 옮겨줍니다.
+    for x in range(sx, sx + square_size):
+        for y in range(sy, sy + square_size):
+            board[x][y] = next_board[x][y]
 
 
-def game():
-    for i in range(K):
-        # 참가자 움직이기
-        move()
+# 모든 참가자들 및 출구를 회전시킵니다.
+def rotate_traveler_and_exit():
+    global exits
 
-        # 모든 참가자가 탈출할경우
-        for player in playerList:
-            if not player.escape:
-                break
-        else:
-            return
+    # m명의 참가자들을 모두 확인합니다.
+    for i in range(1, m + 1):
+        tx, ty = traveler[i]
+        # 해당 참가자가 정사각형 안에 포함되어 있을 때에만 회전시킵니다.
+        if sx <= tx and tx < sx + square_size and sy <= ty and ty < sy + square_size:
+            # Step 1. (sx, sy)를 (0, 0)으로 옮겨주는 변환을 진행합니다. 
+            ox, oy = tx - sx, ty - sy
+            # Step 2. 변환된 상태에서는 회전 이후의 좌표가 (x, y) . (y, square_n - x - 1)가 됩니다.
+            rx, ry = oy, square_size - ox - 1
+            # Step 3. 다시 (sx, sy)를 더해줍니다.
+            traveler[i] = (rx + sx, ry + sy)
 
-        # 미로 회전하기
-        rotate()        
+    # 출구에도 회전을 진행합니다.
+    ex, ey = exits
+    if sx <= ex and ex < sx + square_size and sy <= ey and ey < sy + square_size:
+        # Step 1. (sx, sy)를 (0, 0)으로 옮겨주는 변환을 진행합니다. 
+        ox, oy = ex - sx, ey - sy
+        # Step 2. 변환된 상태에서는 회전 이후의 좌표가 (x, y) . (y, square_n - x - 1)가 됩니다.
+        rx, ry = oy, square_size - ox - 1
+        # Step 3. 다시 (sx, sy)를 더해줍니다.
+        exits = (rx + sx, ry + sy)
 
-if __name__ == "__main__":
-    N, M, K = map(int, input().split())
 
-    maze = [[0] * (N + 1)] + [[0] + list(map(int, input().split())) for _ in range(N)]
+for _ in range(k):
+    # 모든 참가자를 이동시킵니다.
+    move_all_traveler()
 
-    inputList = [list(map(int, input().split())) for _ in range(M)]
+    # 모든 사람이 출구로 탈출했는지 판단합니다.
+    is_all_escaped = True
+    for i in range(1, m + 1):
+        if traveler[i] != exits:
+            is_all_escaped = False
 
-    for i in range(len(inputList)):
-        playerList.append(Player(inputList[i][0], inputList[i][1]))
-    
-    exitY, exitX = map(int,input().split())
+    # 만약 모든 사람이 출구로 탈출했으면 바로 종료합니다.
+    if is_all_escaped: 
+        break
 
-    game()
+    # 한 명 이상의 참가자와 출구를 포함한 가장 작은 정사각형을 찾습니다.
+    find_minimum_square()
 
-    # 총 이동 수 계산
-    cnt = 0
-    for player in playerList:
-        cnt += player.count
+    # 정사각형 내부의 벽을 회전시킵니다.
+    rotate_square()
+    # 모든 참가자들 및 출구를 회전시킵니다.
+    rotate_traveler_and_exit()
 
-    # print(maze)
-    # print(playerList[0])
-    # print(playerList[1])
-    # print(playerList[2])
+print(ans)
 
-    print(cnt)
-    print(exitY, exitX)
+ex, ey = exits
+print(ex, ey)
