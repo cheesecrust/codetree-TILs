@@ -76,6 +76,15 @@ def findNearPlayer():
         if distance < leastDistance:
             leastDistance = distance
             nearPlayerIdx = i
+        elif distance == leastDistance:
+            originPlayer = playerList[nearPlayerIdx]
+            comparePlayer = playerList[i]
+            
+            if comparePlayer.y < originPlayer.y:
+                nearPlayerIdx = i
+            elif comparePlayer.y == originPlayer.y and comparePlayer.x < originPlayer.x:
+                nearPlayerIdx = i
+
 
     if nearPlayerIdx == -1:
         print("error")
@@ -138,10 +147,6 @@ def rotate():
         if flag:
             break
 
-    # print("player: ", nearPlayer)
-    # print("exit: ", exitY, exitX)
-    # print("pivot: ", pivotY, pivotX, boxLength)
-    # print()
     rotate90(pivotY, pivotX, boxLength)
 
 
@@ -150,7 +155,6 @@ def game():
         # 참가자 움직이기
         move()
 
-        # print("player0 : ", playerList[0])
         # 모든 참가자가 탈출할경우
         for player in playerList:
             if not player.escape:
@@ -187,4 +191,3 @@ if __name__ == "__main__":
 
     print(cnt)
     print(exitY, exitX)
-    # print(maze)
