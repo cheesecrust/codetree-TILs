@@ -22,7 +22,6 @@ class Player:
         
 def move():
     for player in playerList:
-
         if player.escape:
             continue
 
@@ -130,18 +129,24 @@ def rotate():
             if i < 1 or i > N or j < 1 or j > N:
                 continue
 
-            if (nearPlayer.y - i) <= boxLength and (nearPlayer.x - j) <= boxLength:
-                pivotY, pivotX = i, j
-                flag = True
-                break
+            for player in playerList:
+                if player.escape: continue
+
+                if i <= player.y <= i + boxLength and j <= player.x <= j + boxLength:
+                    pivotY, pivotX = i, j
+                    flag = True
+                    break
     
+            if flag:
+                break
+
         if flag:
             break
 
-    # print("player: ", nearPlayer)
-    # print("exit: ", exitY, exitX)
-    # print("pivot: ", pivotY, pivotX, boxLength)
-    # print()
+
+    if pivotY == 0 and pivotX == 0:
+        print("error")
+
     rotate90(pivotY, pivotX, boxLength)
 
 
@@ -150,7 +155,6 @@ def game():
         # 참가자 움직이기
         move()
 
-        # print("player0 : ", playerList[0])
         # 모든 참가자가 탈출할경우
         for player in playerList:
             if not player.escape:
@@ -187,4 +191,3 @@ if __name__ == "__main__":
 
     print(cnt)
     print(exitY, exitX)
-    # print(maze)
