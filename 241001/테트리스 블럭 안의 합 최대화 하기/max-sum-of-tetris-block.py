@@ -77,7 +77,7 @@ def fourth():
         for j in range(M):
             if i + 1 >= N or j + 2 >= M:
                 continue
-            tmp = board[i][j] + board[i + 1][j] + board[i + 1][j + 1] + board[i + 1][j + 2]
+            tmp = board[i][j] + board[i][j + 1] + board[i + 1][j + 1] + board[i + 1][j + 2]
             result = max(result, tmp)
 
     for i in range(N):
