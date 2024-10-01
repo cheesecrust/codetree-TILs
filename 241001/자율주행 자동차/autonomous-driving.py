@@ -3,14 +3,14 @@ y, x, d = 0, 0, 0
 board = [list() for _ in range(51)]
 
 dy = [-1, 0, 1, 0]
-dx = [0, -1, 0, 1]
+dx = [0, 1, 0, -1]
 
 def move(y, x, d, answer):
 
     nxt_dir, nxt_y, nxt_x = 0, 0, 0
 
-    for i in range(4):
-        nxt_dir = (d + 1 + i) % 4
+    for i in range(1, 5):
+        nxt_dir = (d - i + 4) % 4
 
         nxt_y = y + dy[nxt_dir]
         nxt_x = x + dx[nxt_dir]
@@ -22,11 +22,12 @@ def move(y, x, d, answer):
             continue
         break
         
+    # 갈 수 없는 곳
     if board[nxt_y][nxt_x] != 0:
         nxt_y = y + dy[(d + 2) % 4]
         nxt_x = x + dx[(d + 2) % 4]
-        # print("back,", nxt_y, nxt_x, d)
 
+        # 후진이 벽
         if board[nxt_y][nxt_x] == 1:
             return answer
         
@@ -34,12 +35,7 @@ def move(y, x, d, answer):
     
     # 성공
     board[nxt_y][nxt_x] = 2
-
-    # for i in range(N):
-    #     print(board[i])
-
-    # print()
-
+    
     return move(nxt_y, nxt_x, nxt_dir, answer + 1)
 
 
