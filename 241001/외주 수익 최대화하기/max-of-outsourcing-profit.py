@@ -12,6 +12,7 @@ def dfs(start, pay):
     for i in range(start, N):
         dfs(start + (i - start) + chart[i][0], pay + chart[i][1])
 
+    answer = max(answer, pay)
     return
 
 if __name__ == "__main__":
