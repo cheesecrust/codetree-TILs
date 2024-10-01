@@ -5,6 +5,9 @@ answer = 0
 def dfs(start, pay):
     global answer
 
+    if start > N:
+        return
+
     if start == N:
         answer = max(answer, pay)
         return
