@@ -23,7 +23,7 @@ def first():
             result = max(result, tmp)
 
     return result
-
+# 네모
 def second():
     result = 0
 
@@ -68,6 +68,35 @@ def third():
             tmp = board[i][j] + board[i][j + 1] + board[i][j + 2] + board[i + 1][j]
             result = max(result, tmp)
 
+# 반대
+    for i in range(N):
+        for j in range(M):
+            if i + 2 >= N or j - 1 < 0:
+                continue
+            tmp = board[i][j] + board[i + 1][j] + board[i + 2][j] + board[i + 2][j - 1]
+            result = max(result, tmp)
+
+    for i in range(N):
+        for j in range(M):
+            if i + 1 >= N or j + 2 >= M:
+                continue
+            tmp = board[i][j] + board[i + 1][j] + board[i + 1][j + 1] + board[i + 1][j + 2]
+            result = max(result, tmp)
+
+    for i in range(N):
+        for j in range(M):
+            if i + 2 >= N or j + 1 >= M:
+                continue
+            tmp = board[i][j] + board[i][j + 1] + board[i + 1][j] + board[i + 2][j]
+            result = max(result, tmp)
+
+    for i in range(N):
+        for j in range(M):
+            if i + 1 >= N or j + 2 >= M:
+                continue
+            tmp = board[i][j] + board[i][j + 1] + board[i][j + 2] + board[i + 1][j + 2]
+            result = max(result, tmp)
+
     return result
 
 def fourth():
@@ -85,6 +114,20 @@ def fourth():
             if i - 1 < 0 or j + 2 >= M:
                 continue
             tmp = board[i][j] + board[i][j + 1] + board[i - 1][j + 1] + board[i - 1][j + 2]
+            result = max(result, tmp)
+    
+    for i in range(N):
+        for j in range(M):
+            if i + 2 >= N or j + 1 >= M:
+                continue
+            tmp = board[i][j] + board[i + 1][j] + board[i + 1][j + 1] + board[i + 2][j + 1]
+            result = max(result, tmp)
+
+    for i in range(N):
+        for j in range(M):
+            if i + 2 >= N or j - 1 < 0:
+                continue
+            tmp = board[i][j] + board[i + 1][j] + board[i + 1][j - 1] + board[i + 2][j - 1]
             result = max(result, tmp)
     
     return result
